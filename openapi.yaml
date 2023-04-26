@@ -1,0 +1,254 @@
+openapi: '3.0.2'
+info:
+  title: TO-DO-Liste
+  version: '1.0'
+  
+  description: |-
+    OpenAPI-Spezifikation einer TO-Do-Liste
+servers:
+  - url: http://localhost:5000
+
+tags:
+  - name: todo-list/{list_id}
+    description: Endpunkte für spezifische TO-DO-Liste
+  - name: todo-list
+    description: Endpunkte für alle TO-Do-Listen
+  - name: todo-list/{list_id}/entry
+    description: Endpunkte zum hinzufügen eines Eintrages in bestimmter Liste
+  - name: entry/{entry_id}
+    description: Endpunkte für spezifische Einträge
+paths:
+  /todo-list/{list_id}:
+    get:
+      tags: 
+        - todo-list/{list_id}
+      description: Liefert alle Einträge einer Todo-Liste zurück.
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema: 
+            type: string
+
+      responses: 
+        '200':
+          description: Erfolgreich
+          content: 
+            application/json:
+              schema:
+                type: array
+                description: Liste aller Einträge der TO-DO-Liste
+                items: 
+                  type: string
+                  description: IDs der Einträge
+        '404':
+          "$ref": "#/components/responses/404"
+    delete:
+      tags: 
+        - todo-list/{list_id}
+      description: Löscht eine komplette Todo-Liste mit allen Einträgen.
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses: 
+        '200':
+          "$ref": "#/components/responses/200"
+        '404':
+          "$ref": "#/components/responses/404"
+        '500':
+          "$ref": "#/components/responses/500"
+    patch:
+      tags:
+        - todo-list/{list_id}
+      description: Aktualisiert den Namen einer bestehenden Todo-Liste
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+      
+      requestBody:
+        description: JSON-Objekt mit Namen der Liste 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                list_name: 
+                  type: string
+                  description: Name der Liste
+      responses: 
+        '200':
+          "$ref": "#/components/responses/200"
+        '404':
+          "$ref": "#/components/responses/404"
+        '500':
+          "$ref": "#/components/responses/500"    
+  /todo-list:
+    get:
+      tags: 
+        - todo-list
+      description: Liefert eine Liste aller Todo-Listen zurück.
+      responses: 
+        '200':
+          description: Erfolgreich
+          content: 
+            application/json:
+              schema:
+                type: array
+                description: Liste aller vorhandenen TO-DO-Listen
+                items: 
+                  type: string
+                  description: IDs der vorhandenen TO-DO-Listen
+                
+    post:
+      tags: 
+        - todo-list
+      description: Fügt eine neue Todo-Liste hinzu
+      requestBody:
+        description: JSON-Objekt mit Namen der Liste 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                list_name: 
+                  type: string
+                  description: Name der neuen Liste
+                
+
+      responses: 
+        '200':
+          description: Erfolgreich
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list_id:
+                    type: string
+                    description: ID der erstellten Liste
+                    example: 28fb7dc2-3faf-4b14-80aa-b43dde17c2b6
+                  list_name:
+                    type: string
+                    description: Name der erstellten Liste
+                    example: SupiDupiListe
+                    
+        '500':
+          "$ref": "#/components/responses/500"
+
+  /todo-list/{list_id}/entry:
+    post:
+      tags: 
+        - todo-list/{list_id}/entry
+      description: Fügt einen Eintrag zu einer bestehenden Todo-Liste hinzu.
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+        
+      requestBody:
+        description: JSON-Objekt mit den Daten des Eintrags 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entry_name: 
+                  type: string
+                  description: Name des Eintrags
+                entry_description:
+                  type: string
+                  description: Beschreibung des Eintrags
+
+      responses: 
+        '200':
+          description: Erfolgreich
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entry_id:
+                    type: string
+                    description: ID des Eintrags
+                  entry_name: 
+                    type: string
+                    description: Name des Eintrags
+                  entry_description:
+                    type: string
+                    description: Beschreibung des Eintrags
+        '404':
+          "$ref": "#/components/responses/404"
+                    
+        '500':
+          "$ref": "#/components/responses/500"
+          
+  /entry/{entry_id}:
+    patch:
+      tags: 
+        - entry/{entry_id}
+      description: Aktualisiert einen bestehenden Eintrag.
+      parameters:
+        - name: entry_id
+          in: path
+          required: true
+          schema:
+            type: string
+        
+      requestBody:
+        description: JSON-Objekt mit den Daten des Eintrags 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entry_name: 
+                  type: string
+                  description: Name des Eintrags
+                entry_description:
+                  type: string
+                  description: Beschreibung des Eintrags
+
+      responses: 
+        '200':
+          "$ref": "#/components/responses/200"
+        '404':
+          "$ref": "#/components/responses/404"
+        '500':
+          "$ref": "#/components/responses/500"
+    delete:
+      tags: 
+        - entry/{entry_id}
+      description: Aktualisiert einen bestehenden Eintrag.
+      parameters:
+        - name: entry_id
+          in: path
+          required: true
+          schema:
+            type: string
+      
+      responses: 
+        '200':
+          "$ref": "#/components/responses/200"
+        '404':
+          "$ref": "#/components/responses/404"
+        '500':
+          "$ref": "#/components/responses/500"
+
+components:
+  responses:
+    
+    500:
+      description: Internal Server Error
+    200:
+      description: Erfolgreich
+    404: 
+      description: ID nicht vorhanden
